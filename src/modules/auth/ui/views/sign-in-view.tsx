@@ -13,8 +13,6 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card"
 import { useForm } from "react-hook-form";
 import Link from "next/link";
-import { set } from "date-fns";
-import { is } from "drizzle-orm";
 
 
 const formSchema = z.object({
@@ -85,7 +83,7 @@ export const SignInView = () => {
                                                     type="email"
                                                     placeholder="example@email.com"
                                                     {...field}
-                                                    className="border border-2 rounded"
+                                                    className="p-1 border border-2 rounded"
                                                 />
                                             </FormControl>
                                             <FormMessage/>
@@ -101,7 +99,7 @@ export const SignInView = () => {
                                                     type="password"
                                                     placeholder="********"
                                                     {...field}
-                                                    className="border border-2 rounded align-center"
+                                                    className="p-1 border border-2 rounded "
                                                 />
                                             </FormControl>
                                             <FormMessage/>
