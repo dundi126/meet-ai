@@ -13,6 +13,7 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card"
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import {FaGoogle, FaGithub} from "react-icons/fa"
 
 
 const formSchema = z.object({
@@ -44,11 +45,12 @@ export const SignInView = () => {
             {
                 email: data.email,
                 password: data.password,
+                callbackURL: "/"
             },
             {
                 onSuccess: () => {
                     setIsLoading(false);
-                    router.push("/");
+                    router.push("/")
                     
                 },
                 onError: ({ error }) => {
@@ -56,6 +58,23 @@ export const SignInView = () => {
                 }
             }
         )
+    }
+
+    const onsocial = (provider: "google" | "github") => {
+        setError(null);
+        setIsLoading(true);
+        authClient.signIn.social({
+            provider: provider,
+            callbackURL: '/'
+        }, {
+            onSuccess: () => {
+                setIsLoading(false);
+            },
+            onError: ({ error }) => { 
+                setError(error.message);
+                setIsLoading(false);
+            }
+        })
     }
 
 
@@ -123,13 +142,20 @@ export const SignInView = () => {
                                         Or continue with
                                     </span>
                                 </div>
-
+ 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <Button variant="outline" type="button" className="w-full">
-                                        Google
+                                    <Button 
+                                        onClick={() => {
+                                            onsocial("google")
+                                        }}
+                                    
+                                        variant="outline" type="button" className="w-full">
+                                        <FaGoogle/>
                                     </Button>
-                                    <Button variant="outline" type="button" className="w-full">
-                                        Gitub
+                                    <Button onClick={() => {
+                                        onsocial("github")
+                                    }} variant="outline" type="button" className="w-full">
+                                        <FaGithub/>
                                     </Button>
                                 </div>
                                 <div className="text-center text-sm">

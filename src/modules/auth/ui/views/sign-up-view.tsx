@@ -14,6 +14,7 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card"
 import { useForm } from "react-hook-form";
 import Link from "next/link";
+import {FaGoogle, FaGithub} from "react-icons/fa"
 
 const formSchema = z.object({
     name: z.string().min(8, { message: "Name is required" }),
@@ -47,17 +48,37 @@ export const SignUpView = () => {
         authClient.signUp.email({
             name: data.name,
             email: data.email,
-            password:data.password,
+            password: data.password,
+            callbackURL: "/",
         }, {
             onSuccess: () => {
                 setIsLoading(false)
                 router.push("/")
+
             },
             onError: ({ error }) => {
                 setError(error.message)
             }
         }
         )
+    }
+
+    const onsocial = async (provider: "github"| "google") => {
+        setError(null)
+        setIsLoading(true)
+
+        authClient.signIn.social({
+            provider: provider,
+            callbackURL: "/",
+        }, {
+            onSuccess: () => {
+                setIsLoading(false)
+
+            },
+            onError: ({ error }) => {
+                setError(error.message)
+            }
+        })
     }
 
     return (
@@ -158,11 +179,12 @@ export const SignUpView = () => {
                                     </div>
     
                                     <div className="grid grid-cols-2 gap-4">
-                                        <Button variant="outline" type="button" className="w-full">
-                                            Google
+                                    <Button onClick={() => onsocial("google") 
+                                        } variant="outline" type="button" className="w-full">
+                                            <FaGoogle/>
                                         </Button>
-                                        <Button variant="outline" type="button" className="w-full">
-                                            Gitub
+                                    <Button onClick={() => { onsocial('github') }} variant="outline" type="button" className="w-full">
+                                            <FaGithub/>
                                         </Button>
                                     </div>
                                     <div className="text-center text-sm">
