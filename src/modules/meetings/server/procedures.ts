@@ -58,7 +58,7 @@ export const meetingsRouter = createTRPCRouter({
     update : protectedProcedure
             .input(meetingsUpdateSchema)
             .mutation(async ({ ctx, input }) => {
-                const [updatedMeeting] = await db.update(meetings).set(input).where(
+                const [updatedMeeting] = await db.update(meetings).set({ ...input, updatedAt: new Date() }).where(
                     and(
                         eq(meetings.id, input.id),
                         eq(meetings.userId, ctx.auth.user.id)
