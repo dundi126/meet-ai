@@ -97,20 +97,24 @@ export const meetingsProcessing = inngest.createFunction(
             
         })
 
-
-        const { output } = await getSummarizer().run(
-            "summarize following transcript:" + JSON.stringify(transcriptWithSpeaker)
-        )
+        let summary: string | null = null
+        try {
+            const { output } = await getSummarizer().run(
+                "summarize following transcript:" + JSON.stringify(transcriptWithSpeaker)
+            )
+            summary = (output[0] as TextMessage).content as string
+        } catch (err) {
+            console.error("[inngest] meetings-processing summarizer failed:", err)
+        }
 
         await step.run("save-summary", async () => {
-    await db.update(meetings)
-        .set({
-        summary: (output[0] as TextMessage).content as string,
-            status: "completed"
+            await db.update(meetings)
+                .set({
+                    summary: summary ?? null,
+                    status: "completed",
+                    updatedAt: new Date(),
+                })
+                .where(eq(meetings.id, event.data.meetingId))
         })
-        .where(eq(meetings.id, event.data.meetingId))
-        })
-
-        
     }
 )

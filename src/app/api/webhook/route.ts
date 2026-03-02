@@ -108,7 +108,7 @@ export async function POST(request: Request) {
         }
 
         await db.update(meetings)
-            .set({ status: "active", startedAt: new Date() })
+            .set({ status: "active", startedAt: new Date(), updatedAt: new Date() })
             .where(eq(meetings.id, existingMeeting.id))
         
         
@@ -182,7 +182,8 @@ export async function POST(request: Request) {
         await db.update(meetings)
             .set({
                 status: 'processing',
-                endedAt: new Date()
+                endedAt: new Date(),
+                updatedAt: new Date(),
             })
             .where(and(eq(meetings.id, meetingId), eq(meetings.status, "active")))
     } else if (eventType === "call.transcription_ready") {
@@ -200,6 +201,7 @@ export async function POST(request: Request) {
         const [updatedMeeting] = await db.update(meetings)
             .set({
                 transcriptUrl: event.call_transcription.url,
+                updatedAt: new Date(),
             })
             .where(eq(meetings.id, meetingId))
             .returning()
@@ -235,8 +237,9 @@ export async function POST(request: Request) {
 
         const [updatedMeeting] = await db.update(meetings)
             .set({
-            recordingUrl: event.call_recording.url,
-        })
+                recordingUrl: event.call_recording.url,
+                updatedAt: new Date(),
+            })
             .where(eq(meetings.id, meetingId))
             .returning()
         
